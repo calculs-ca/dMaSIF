@@ -41,11 +41,21 @@ def load_surface_np(fname, center):
 
 def convert_plys(ply_dir, npy_dir):
     print("Converting PLYs")
-    for p in tqdm(ply_dir.glob("*.ply")):
-        protein = load_surface_np(p, center=False)
-        np.save(npy_dir / (p.stem + "_xyz.npy"), protein["xyz"])
-        np.save(npy_dir / (p.stem + "_triangles.npy"), protein["triangles"])
-        np.save(npy_dir / (p.stem + "_features.npy"), protein["features"])
-        np.save(npy_dir / (p.stem + "_iface_labels.npy"), protein["iface_labels"])
-        np.save(npy_dir / (p.stem + "_normals.npy"), protein["normals"])
+    g = list(ply_dir.glob("*.ply"))
+    for p in tqdm(g):
+        try:
+            protein = load_surface_np(p, center=False)
+            np.save(npy_dir / (p.stem + "_xyz.npy"), protein["xyz"])
+            np.save(npy_dir / (p.stem + "_triangles.npy"), protein["triangles"])
+            np.save(npy_dir / (p.stem + "_features.npy"), protein["features"])
+            np.save(npy_dir / (p.stem + "_iface_labels.npy"), protein["iface_labels"])
+            np.save(npy_dir / (p.stem + "_normals.npy"), protein["normals"])
+        except Exception as e:
+            print(e, p)
+
+
+if __name__ == "__main__":
+    protein_dir = Path('surface_data/raw/01-benchmark_surfaces_npy')
+    assert protein_dir.exists()
+    convert_plys(Path('surface_data/raw/01-benchmark_surfaces'), protein_dir)
 

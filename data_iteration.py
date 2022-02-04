@@ -84,8 +84,14 @@ def save_protein_batch_single(protein_pair_id, P, save_path, pdb_idx):
 
     inputs = P["input_features"]
 
-    embedding = P["embedding_1"] if pdb_idx == 1 else P["embedding_2"]
-    emb_id = 1 if pdb_idx == 1 else 2
+    if "embedding_1" in P.keys():
+        embedding = P["embedding_1"]
+        emb_id = 1
+    elif "embedding_2" in P.keys():
+        embedding = P["embedding_2"]
+        emb_id = 2
+    else:
+        raise KeyError
 
     predictions = torch.sigmoid(P["iface_preds"]) if "iface_preds" in P.keys() else 0.0*embedding[:,0].view(-1, 1)
 
@@ -93,9 +99,9 @@ def save_protein_batch_single(protein_pair_id, P, save_path, pdb_idx):
 
     coloring = torch.cat([inputs, embedding, predictions, labels], axis=1)
 
-    save_vtk(str(save_path / pdb_id) + f"_pred_emb{emb_id}", xyz, values=coloring)
     np.save(str(save_path / pdb_id) + "_predcoords", numpy(xyz))
     np.save(str(save_path / pdb_id) + f"_predfeatures_emb{emb_id}", numpy(coloring))
+    save_vtk(str(save_path / pdb_id) + f"_pred_emb{emb_id}", xyz, values=coloring)
 
 
 def project_iface_labels(P, threshold=2.0):
@@ -329,7 +335,9 @@ def iterate(
             prediction_time = time.time() - prediction_time
 
             P1 = outputs["P1"]
+            #P1["labels"] = None
             P2 = outputs["P2"]
+            #P2["labels"] = None
 
             if args.search:
                 generate_matchinglabels(args, P1, P2)
@@ -423,9 +431,11 @@ def iterate(
 def iterate_surface_precompute(dataset, net, args):
     processed_dataset = []
     for it, protein_pair in enumerate(tqdm(dataset)):
+        #if it > 10:
+        #    break
         protein_pair.to(args.device)
         P1, P2 = process(args, protein_pair, net)
-        if args.random_rotation:
+        if False:  # NO NEED, THERE ARE ROTATIONS DURING EPOCHS!! args.random_rotation:
             P1["rand_rot"] = protein_pair.rand_rot1
             P1["atom_center"] = protein_pair.atom_center1
             P1["xyz"] = (

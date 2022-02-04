@@ -33,7 +33,18 @@ def load_structure_np(fname, center):
 
 def convert_pdbs(pdb_dir, npy_dir):
     print("Converting PDBs")
-    for p in tqdm(pdb_dir.glob("*.pdb")):
-        protein = load_structure_np(p, center=False)
-        np.save(npy_dir / (p.stem + "_atomxyz.npy"), protein["xyz"])
-        np.save(npy_dir / (p.stem + "_atomtypes.npy"), protein["types"])
+    g = list(pdb_dir.glob("*.pdb"))
+    for p in tqdm(g):
+        try:
+            protein = load_structure_np(p, center=False)
+            np.save(npy_dir / (p.stem + "_atomxyz.npy"), protein["xyz"])
+            np.save(npy_dir / (p.stem + "_atomtypes.npy"), protein["types"])
+        except Exception as e:
+            print(e, p)
+
+
+if __name__ == "__main__":
+    protein_dir = Path('surface_data/raw/01-benchmark_surfaces_npy')
+    assert protein_dir.exists()
+    convert_pdbs(Path('surface_data/raw/01-benchmark_pdbs'), protein_dir)
+

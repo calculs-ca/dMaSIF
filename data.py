@@ -8,6 +8,7 @@ import urllib.request
 import tarfile
 from pathlib import Path
 import requests
+from tqdm import tqdm
 from data_preprocessing.convert_pdb2npy import convert_pdbs
 from data_preprocessing.convert_ply2npy import convert_plys
 
@@ -368,7 +369,8 @@ class ProteinPairsSurfaces(InMemoryDataset):
         # # Read data into huge `Data` list.
         training_pairs_data = []
         training_pairs_data_ids = []
-        for p in training_pairs_list:
+        print("Making data objects...")
+        for p in tqdm(training_pairs_list):
             try:
                 protein_pair = load_protein_pair(p, protein_dir)
             except FileNotFoundError:
@@ -378,14 +380,15 @@ class ProteinPairsSurfaces(InMemoryDataset):
 
         testing_pairs_data = []
         testing_pairs_data_ids = []
-        for p in testing_pairs_list:
+        for p in tqdm(testing_pairs_list):
             try:
                 protein_pair = load_protein_pair(p, protein_dir)
             except FileNotFoundError:
                 continue
             testing_pairs_data.append(protein_pair)
             testing_pairs_data_ids.append(p)
-
+        print("Done.")
+        
         if self.pre_filter is not None:
             training_pairs_data = [
                 data for data in training_pairs_data if self.pre_filter(data)
@@ -402,6 +405,7 @@ class ProteinPairsSurfaces(InMemoryDataset):
                 self.pre_transform(data) for data in testing_pairs_data
             ]
 
+        print("Collating and saving to disk...")
         training_pairs_data, training_pairs_slices = self.collate(training_pairs_data)
         torch.save(
             (training_pairs_data, training_pairs_slices), self.processed_paths[0]
