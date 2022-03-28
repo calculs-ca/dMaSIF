@@ -1,4 +1,6 @@
 # Standard imports:
+import itertools
+
 import numpy as np
 import torch
 from torch.utils.tensorboard import SummaryWriter
@@ -8,13 +10,14 @@ from torch_geometric.transforms import Compose
 from pathlib import Path
 
 # Custom data loader and model:
-from data import ProteinPairsSurfaces, PairData, CenterPairAtoms, load_protein_pair
+from data import ProteinPairsSurfaces, PairData, CenterPairAtoms, load_protein_pair, load_indiv_protein_pair
 from data import RandomRotationPairAtoms, NormalizeChemFeatures, iface_valid_filter
 from model import dMaSIF
 from data_iteration import iterate
 from helper import *
 from Arguments import parser
 
+parser.add_argument('--npy_dir')
 args = parser.parse_args()
 model_path = "models/" + args.experiment_name
 save_predictions_path = Path("preds/" + args.experiment_name)
@@ -33,7 +36,22 @@ transformations = (
     else Compose([NormalizeChemFeatures()])
 )
 
-if args.single_pdb != "":
+if args.npy_dir is not None:
+    npy_paths = Path(args.npy_dir).glob('*_atomxyz.npy')
+    npy_pairs = itertools.product(npy_paths, npy_paths)
+    test_dataset = []
+    test_pdb_ids = []
+
+    def get_stem(p: Path):
+        # e.g. 'dir/ABCD_A_atomxyz.npy' -> 'ABCD_A'
+        return '_'.join(p.stem.split('_')[:-1])
+
+    for npy1, npy2 in npy_pairs:
+        npy1_id = get_stem(npy1)
+        npy2_id = get_stem(npy2)
+        test_dataset.append(load_indiv_protein_pair(npy1_id, npy1_id, npy1.parent))
+        test_pdb_ids.append(f'{npy1_id}__{npy2_id}')
+elif args.single_pdb != "":
     single_data_dir = Path("./data_preprocessing/npys/")
     test_dataset = [load_protein_pair(args.single_pdb, single_data_dir,single_pdb=True)]
     test_pdb_ids = [args.single_pdb]
