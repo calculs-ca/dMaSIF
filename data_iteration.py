@@ -75,27 +75,27 @@ def process_single(protein_pair, chain_idx=1):
 
 def save_protein_batch_single(protein_pair_id, P, save_path, pdb_idx):
 
-    protein_pair_id = protein_pair_id.split("_")
-    pdb_id = protein_pair_id[0] + "_" + protein_pair_id[pdb_idx]
+    #protein_pair_id = protein_pair_id.split("_")
+    #pdb_id = protein_pair_id[0] + "_" + protein_pair_id[pdb_idx]
 
-    batch = P["batch"]
+    #batch = P["batch"]
 
-    xyz = P["xyz"]
+    #xyz = P["xyz"]
 
-    inputs = P["input_features"]
+    #inputs = P["input_features"]
 
     embedding = P["embedding_1"] if pdb_idx == 1 else P["embedding_2"]
-    emb_id = 1 if pdb_idx == 1 else 2
+    #emb_id = 1 if pdb_idx == 1 else 2  # Bravo
 
-    predictions = torch.sigmoid(P["iface_preds"]) if "iface_preds" in P.keys() else 0.0*embedding[:,0].view(-1, 1)
+    #predictions = torch.sigmoid(P["iface_preds"]) if "iface_preds" in P.keys() else 0.0*embedding[:,0].view(-1, 1)
 
-    labels = P["labels"].view(-1, 1) if P["labels"] is not None else 0.0 * predictions
+    #labels = P["labels"].view(-1, 1) if P["labels"] is not None else 0.0 * predictions
 
-    coloring = torch.cat([inputs, embedding, predictions, labels], axis=1)
+    #coloring = torch.cat([inputs, embedding, predictions, labels], axis=1)
 
-    save_vtk(str(save_path / pdb_id) + f"_pred_emb{emb_id}", xyz, values=coloring)
-    np.save(str(save_path / pdb_id) + "_predcoords", numpy(xyz))
-    np.save(str(save_path / pdb_id) + f"_predfeatures_emb{emb_id}", numpy(coloring))
+    #save_vtk(str(save_path / pdb_id) + f"_pred_emb{emb_id}", xyz, values=coloring)
+    #np.save(str(save_path / pdb_id) + "_predcoords", numpy(xyz))
+    np.save(str(save_path / protein_pair_id) + f"_pred_emb{pdb_idx}", numpy(embedding))
 
 
 def project_iface_labels(P, threshold=2.0):
