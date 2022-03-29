@@ -8,6 +8,7 @@ from torch.utils.data import random_split
 from torch_geometric.data import DataLoader
 from torch_geometric.transforms import Compose
 from pathlib import Path
+from tqdm import tqdm
 
 # Custom data loader and model:
 from data import ProteinPairsSurfaces, PairData, CenterPairAtoms, load_protein_pair, load_indiv_protein_pair
@@ -46,7 +47,7 @@ if args.npy_dir is not None:
         # e.g. 'dir/ABCD_A_atomxyz.npy' -> 'ABCD_A'
         return '_'.join(p.stem.split('_')[:-1])
 
-    for npy1, npy2 in npy_pairs:
+    for npy1, npy2 in tqdm(npy_pairs, total=len(npy_paths) ** 2, desc='Loading pairs'):
         if npy1 == npy2:
             continue
 
