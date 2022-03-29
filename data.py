@@ -268,29 +268,19 @@ def load_protein_pair(pdb_id, data_dir,single_pdb=False):
     return protein_pair_data
 
 
-def load_indiv_protein_pair(npy1_id: str, npy2_id: str, dir: Path):
-    p1 = load_protein_npy(npy1_id, dir, single_pdb=True)  # TODO why single_pdb=True ?
-    p2 = load_protein_npy(npy2_id, dir, single_pdb=True)
+def load_indiv_protein(npy1_id: str, dir: Path):
+    p1 = load_protein_npy(npy1_id, dir, single_pdb=True)
     y_p1 = p1["y"]
-    y_p2 = p2["y"]
 
     protein_pair_data = PairData(
         xyz_p1=p1["xyz"],
-        xyz_p2=p2["xyz"],
         face_p1=p1["face"],
-        face_p2=p2["face"],
         chemical_features_p1=p1["chemical_features"],
-        chemical_features_p2=p2["chemical_features"],
         y_p1=y_p1,
-        y_p2=y_p2,
         normals_p1=p1["normals"],
-        normals_p2=p2["normals"],
         center_location_p1=p1["center_location"],
-        center_location_p2=p2["center_location"],
         atom_coords_p1=p1["atom_coords"],
-        atom_coords_p2=p2["atom_coords"],
         atom_types_p1=p1["atom_types"],
-        atom_types_p2=p2["atom_types"],
     )
     return protein_pair_data
 

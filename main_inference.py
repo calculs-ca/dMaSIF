@@ -11,7 +11,7 @@ from pathlib import Path
 from tqdm import tqdm
 
 # Custom data loader and model:
-from data import ProteinPairsSurfaces, PairData, CenterPairAtoms, load_protein_pair, load_indiv_protein_pair
+from data import ProteinPairsSurfaces, PairData, CenterPairAtoms, load_protein_pair, load_indiv_protein
 from data import RandomRotationPairAtoms, NormalizeChemFeatures, iface_valid_filter
 from model import dMaSIF
 from data_iteration import iterate
@@ -38,8 +38,10 @@ transformations = (
 )
 
 if args.npy_dir is not None:
+    args.single_protein = True
+
     npy_paths = list(Path(args.npy_dir).glob('*_atomxyz.npy'))
-    npy_pairs = itertools.product(npy_paths, repeat=2)
+
     test_dataset = []
     test_pdb_ids = []
 
@@ -47,14 +49,11 @@ if args.npy_dir is not None:
         # e.g. 'dir/ABCD_A_atomxyz.npy' -> 'ABCD_A'
         return '_'.join(p.stem.split('_')[:-1])
 
-    for npy1, npy2 in tqdm(npy_pairs, total=len(npy_paths) ** 2, desc='Loading pairs'):
-        if npy1 == npy2:
-            continue
+    for p in tqdm(npy_paths, desc='Loading npy'):
+        npy_id = get_stem(p)
+        test_dataset.append(load_indiv_protein(npy_id, p.parent))
+        test_pdb_ids.append(npy_id)
 
-        npy1_id = get_stem(npy1)
-        npy2_id = get_stem(npy2)
-        test_dataset.append(load_indiv_protein_pair(npy1_id, npy1_id, npy1.parent))
-        test_pdb_ids.append(f'{npy1_id}__{npy2_id}')
 elif args.single_pdb != "":
     single_data_dir = Path("./data_preprocessing/npys/")
     test_dataset = [load_protein_pair(args.single_pdb, single_data_dir,single_pdb=True)]
