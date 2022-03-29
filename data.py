@@ -269,8 +269,8 @@ def load_protein_pair(pdb_id, data_dir,single_pdb=False):
 
 
 def load_indiv_protein_pair(npy1_id: str, npy2_id: str, dir: Path):
-    p1 = load_protein_npy(npy1_id, dir)
-    p2 = load_protein_npy(npy2_id, dir)
+    p1 = load_protein_npy(npy1_id, dir, single_pdb=True)  # TODO why single_pdb=True ?
+    p2 = load_protein_npy(npy2_id, dir, single_pdb=True)
     y_p1 = p1["y"]
     y_p2 = p2["y"]
 
