@@ -331,7 +331,7 @@ def iterate(
             P1 = outputs["P1"]
             P2 = outputs["P2"]
 
-            if args.search:
+            if args.search and not args.single_protein:
                 generate_matchinglabels(args, P1, P2)
 
             if P1["labels"] is not None:
