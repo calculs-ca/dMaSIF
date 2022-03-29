@@ -157,8 +157,11 @@ def convert_pdb_file_to_npy(pdb_filepath: Path, out_path: Path, include_complex=
         model = Selection.unfold_entities(struct, "M")[0]
         all_chains = [chain.get_id() for chain in model]
 
-        for chain in all_chains:
-            make_npy_from_pdb(chain)
+        if include_complex and len(all_chains) == 1:
+            print('The pdb contains a single chain: not outputting per-chain pdb since the complex has been output.')
+        else:
+            for chain in all_chains:
+                make_npy_from_pdb(chain)
 
 
 # if __name__ == '__main__':
