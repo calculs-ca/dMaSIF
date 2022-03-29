@@ -153,7 +153,7 @@ def convert_pdb_file_to_npy(pdb_filepath: Path, out_path: Path, include_complex=
     if include_indiv_chains:
         # Get list of chains
         parser = PDBParser(QUIET=True)
-        struct = parser.get_structure(infilename, infilename)
+        struct = parser.get_structure(protonated_file, protonated_file)
         model = Selection.unfold_entities(struct, "M")[0]
         all_chains = [chain.get_id() for chain in model]
 
