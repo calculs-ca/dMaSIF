@@ -37,8 +37,8 @@ transformations = (
 )
 
 if args.npy_dir is not None:
-    npy_paths = Path(args.npy_dir).glob('*_atomxyz.npy')
-    npy_pairs = itertools.product(npy_paths, npy_paths)
+    npy_paths = list(Path(args.npy_dir).glob('*_atomxyz.npy'))
+    npy_pairs = itertools.product(npy_paths, repeat=2)
     test_dataset = []
     test_pdb_ids = []
 
@@ -47,6 +47,9 @@ if args.npy_dir is not None:
         return '_'.join(p.stem.split('_')[:-1])
 
     for npy1, npy2 in npy_pairs:
+        if npy1 == npy2:
+            continue
+
         npy1_id = get_stem(npy1)
         npy2_id = get_stem(npy2)
         test_dataset.append(load_indiv_protein_pair(npy1_id, npy1_id, npy1.parent))
