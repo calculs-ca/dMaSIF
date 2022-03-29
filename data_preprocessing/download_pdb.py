@@ -18,9 +18,9 @@ parser.add_argument(
     "--pdb_list", type=str,default='', help="Path to a text file that includes a list of PDB codes along with chains, example 1ABC_A_B", required=False
 )
 
-tmp_dir = Path('./tmp')
-pdb_dir = Path('./pdbs')
-npy_dir = Path('./npys')
+# tmp_dir = Path('./tmp')
+# pdb_dir = Path('./pdbs')
+# npy_dir = Path('./npys')
 
 PROTEIN_LETTERS = [x.upper() for x in IUPACData.protein_letters_3to1.keys()]
 
@@ -144,8 +144,8 @@ def convert_pdb_file_to_npy(pdb_filepath: Path, out_path: Path, include_complex=
         out_filename = out_path / f"{file_stem}_{chain_id}.pdb"
         extractPDB(protonated_file, str(out_filename), chain)
         protein = load_structure_np(out_filename, center=False)
-        np.save(npy_dir / f"{file_stem}_{chain_id}_atomxyz", protein["xyz"])
-        np.save(npy_dir / f"{file_stem}_{chain_id}_atomtypes", protein["types"])
+        np.save(out_path / f"{file_stem}_{chain_id}_atomxyz", protein["xyz"])
+        np.save(out_path / f"{file_stem}_{chain_id}_atomtypes", protein["types"])
 
     if include_complex:
         make_npy_from_pdb(None)
