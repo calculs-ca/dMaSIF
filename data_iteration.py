@@ -100,7 +100,13 @@ def save_protein_batch_single(protein_pair_id, P, save_path, pdb_idx):
 
     #save_vtk(str(save_path / pdb_id) + f"_pred_emb{emb_id}", xyz, values=coloring)
     #np.save(str(save_path / pdb_id) + "_predcoords", numpy(xyz))
-    np.save(str(save_path / protein_pair_id) + f"_out{pdb_idx}", numpy(out))
+
+    if predictions is None:
+        out_name = f"{out}__{protein_pair_id}__search.npy"
+    else:
+        out_name = f"{out}__{protein_pair_id}__site.npy"
+
+    np.save(str(save_path / out_name), numpy(out))
 
 
 def project_iface_labels(P, threshold=2.0):
