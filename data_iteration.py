@@ -82,22 +82,25 @@ def save_protein_batch_single(protein_pair_id, P, save_path, pdb_idx):
 
     #xyz = P["xyz"]
 
-    #inputs = P["input_features"]
+    inputs = P["input_features"]
 
     embedding = P["embedding_1"] if pdb_idx == 1 else P["embedding_2"]
     #emb_id = 1 if pdb_idx == 1 else 2  # Bravo
 
-    predictions = torch.sigmoid(P["iface_preds"])
+    predictions = torch.sigmoid(P["iface_preds"]) if P["iface_preds"] is not None else None
 
     #labels = P["labels"].view(-1, 1) if P["labels"] is not None else 0.0 * predictions
 
     #coloring = torch.cat([inputs, embedding, predictions, labels], axis=1)
 
-    embed_and_sitepred = torch.cat([embedding, predictions], axis=1)
+    columns = [inputs, embedding]
+    if predictions is not None:
+        columns.append(predictions)
+    out = torch.cat(columns, axis=1)
 
     #save_vtk(str(save_path / pdb_id) + f"_pred_emb{emb_id}", xyz, values=coloring)
     #np.save(str(save_path / pdb_id) + "_predcoords", numpy(xyz))
-    np.save(str(save_path / protein_pair_id) + f"_pred_emb_site{pdb_idx}", numpy(embed_and_sitepred))
+    np.save(str(save_path / protein_pair_id) + f"_out{pdb_idx}", numpy(out))
 
 
 def project_iface_labels(P, threshold=2.0):
