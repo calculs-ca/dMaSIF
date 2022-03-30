@@ -397,8 +397,8 @@ class dMaSIF(nn.Module):
         features = self.dropout(self.features(P))
         P["input_features"] = features
 
-        torch.cuda.synchronize(device=features.device)
-        torch.cuda.reset_max_memory_allocated(device=P["atoms"].device)
+        #torch.cuda.synchronize(device=features.device)
+        #torch.cuda.reset_max_memory_allocated(device=P["atoms"].device)
         begin = time.time()
 
         # Ours:
@@ -436,12 +436,12 @@ class dMaSIF(nn.Module):
             if self.args.search:
                 P["embedding_2"] = self.conv2(P["xyz"], features, P["batch"])
 
-        torch.cuda.synchronize(device=features.device)
+        #torch.cuda.synchronize(device=features.device)
         end = time.time()
-        memory_usage = torch.cuda.max_memory_allocated(device=P["atoms"].device)
+        #memory_usage = torch.cuda.max_memory_allocated(device=P["atoms"].device)
         conv_time = end - begin
 
-        return conv_time, memory_usage
+        return conv_time
 
     def preprocess_surface(self, P):
         P["xyz"], P["normals"], P["batch"] = atoms_to_points_normals(

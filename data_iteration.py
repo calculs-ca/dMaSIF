@@ -292,14 +292,14 @@ def iterate(
             optimizer.zero_grad()
 
         # Generate the surface:
-        torch.cuda.synchronize()
+        
         surface_time = time.time()
         P1_batch, P2_batch = process(args, protein_pair, net)
-        torch.cuda.synchronize()
+        
         surface_time = time.time() - surface_time
 
         for protein_it in range(protein_batch_size):
-            torch.cuda.synchronize()
+            
             iteration_time = time.time()
 
             P1 = extract_single(P1_batch, protein_it)
@@ -333,10 +333,10 @@ def iterate(
                     P2["rand_rot"] = torch.eye(3, device=P2["xyz"].device)
                     P2["atom_center"] = torch.zeros((1, 3), device=P2["xyz"].device)
                     
-            torch.cuda.synchronize()
+            
             prediction_time = time.time()
             outputs = net(P1, P2)
-            torch.cuda.synchronize()
+            
             prediction_time = time.time() - prediction_time
 
             P1 = outputs["P1"]
@@ -354,11 +354,11 @@ def iterate(
 
             # Compute the gradient, update the model weights:
             if not test:
-                torch.cuda.synchronize()
+                
                 back_time = time.time()
                 loss.backward()
                 optimizer.step()
-                torch.cuda.synchronize()
+                
                 back_time = time.time() - back_time
 
             if it == protein_it == 0 and not test:
@@ -416,7 +416,7 @@ def iterate(
                     **{"R_values/" + k: v for k, v in R_values.items()},
                 )
             )
-            torch.cuda.synchronize()
+            
             iteration_time = time.time() - iteration_time
 
     # Turn a list of dicts into a dict of lists:

@@ -26,7 +26,7 @@ if not Path("models/").exists():
 # Ensure reproducibility:
 torch.backends.cudnn.deterministic = True
 torch.manual_seed(args.seed)
-torch.cuda.manual_seed_all(args.seed)
+#torch.cuda.manual_seed_all(args.seed)
 np.random.seed(args.seed)
 
 # Create the model, with a warm restart if applicable:
