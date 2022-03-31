@@ -441,7 +441,7 @@ class dMaSIF(nn.Module):
         #memory_usage = torch.cuda.max_memory_allocated(device=P["atoms"].device)
         conv_time = end - begin
 
-        return conv_time
+        return conv_time, -1
 
     def preprocess_surface(self, P):
         torch.manual_seed(0)
