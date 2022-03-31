@@ -444,6 +444,8 @@ class dMaSIF(nn.Module):
         return conv_time
 
     def preprocess_surface(self, P):
+        torch.manual_seed(0)
+        torch.cuda.manual_seed_all(0)
         P["xyz"], P["normals"], P["batch"] = atoms_to_points_normals(
             P["atoms"],
             P["batch_atoms"],
