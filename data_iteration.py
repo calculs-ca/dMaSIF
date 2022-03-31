@@ -102,9 +102,9 @@ def save_protein_batch_single(protein_pair_id, P, save_path, pdb_idx):
     #np.save(str(save_path / pdb_id) + "_predcoords", numpy(xyz))
 
     if predictions is None:
-        out_name = f"{out}__{protein_pair_id}__search.npy"
+        out_name = f"out__{protein_pair_id}__search.npy"
     else:
-        out_name = f"{out}__{protein_pair_id}__site.npy"
+        out_name = f"out__{protein_pair_id}__site.npy"
 
     np.save(str(save_path / out_name), numpy(out))
 
