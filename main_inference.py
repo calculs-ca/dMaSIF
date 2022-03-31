@@ -25,7 +25,9 @@ save_predictions_path = Path("preds/" + args.experiment_name)
 
 # Ensure reproducability:
 torch.backends.cudnn.deterministic = True
+torch.backends.cudnn.benchmark = False
 torch.manual_seed(args.seed)
+torch.use_deterministic_algorithms()
 #torch.cuda.manual_seed_all(args.seed)
 np.random.seed(args.seed)
 
