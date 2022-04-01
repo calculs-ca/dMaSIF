@@ -177,7 +177,7 @@ def main():
     include_complex = not args.no_complex
     include_indiv_chains = not args.no_indiv_chains
 
-    pdb_paths = args.pdb_dir.glob('*.pdb')
+    pdb_paths = list(args.pdb_dir.glob('*.pdb'))
     for p in tqdm(pdb_paths):
         convert_pdb_file_to_npy(p, args.out_path, include_complex=include_complex,
                                 include_indiv_chains=include_indiv_chains)
