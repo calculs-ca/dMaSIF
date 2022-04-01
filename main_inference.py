@@ -19,9 +19,9 @@ from helper import *
 from Arguments import parser
 
 parser.add_argument('--npy_dir')
+parser.add_argument('--out_dir', type=Path)
+parser.add_argument('--model_path')
 args = parser.parse_args()
-model_path = "models/" + args.experiment_name
-save_predictions_path = Path("preds/" + args.experiment_name)
 
 # Ensure reproducability:
 torch.backends.cudnn.deterministic = True
@@ -92,7 +92,7 @@ test_loader = DataLoader(
 net = dMaSIF(args)
 # net.load_state_dict(torch.load(model_path, map_location=args.device))
 net.load_state_dict(
-    torch.load(model_path, map_location=args.device)["model_state_dict"]
+    torch.load(args.model_path, map_location=args.device)["model_state_dict"]
 )
 net = net.to(args.device)
 
@@ -103,7 +103,7 @@ info = iterate(
     None,
     args,
     test=True,
-    save_path=save_predictions_path,
+    save_path=args.out_dir,
     pdb_ids=test_pdb_ids,
 )
 
