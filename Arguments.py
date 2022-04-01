@@ -4,7 +4,7 @@ parser = argparse.ArgumentParser(description="Network parameters")
 
 # Main parameters
 parser.add_argument(
-    "--experiment_name", type=str, help="Name of experiment", required=True
+    "--experiment_name", type=str, help="Name of experiment"
 )
 parser.add_argument(
     "--use_mesh", type=bool, default=False, help="Use precomputed surfaces"
