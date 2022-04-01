@@ -1,6 +1,5 @@
 import Bio
-from Bio.PDB import * 
-from Bio.SeqUtils import IUPACData
+from Bio.PDB import *
 import sys
 import importlib
 import os

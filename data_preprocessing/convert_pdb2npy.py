@@ -5,6 +5,7 @@ import numpy as np
 from pathlib import Path
 from tqdm import tqdm
 from Bio.PDB import *
+from Bio.SeqUtils import IUPACData
 
 
 ele2num = {"C": 0, "H": 1, "O": 2, "N": 3, "S": 4, "SE": 5}
