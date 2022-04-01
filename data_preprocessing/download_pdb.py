@@ -127,41 +127,7 @@ def get_single(pdb_id: str,chains: list):
         np.save(npy_dir / f"{pdb_id}_{chain}_atomtypes", protein["types"])
 
 
-def convert_pdb_file_to_npy(pdb_filepath: Path, out_path: Path, include_complex=True, include_indiv_chains=True):
-    file_stem = pdb_filepath.stem
-    protonated_file = out_path / (file_stem + '_proton.pdb')
 
-    ##### Protonate with reduce, if hydrogens included.
-    # - Always protonate as this is useful for charges. If necessary ignore hydrogens later.
-    protonate(pdb_filepath, protonated_file)
-
-    def make_npy_from_pdb(chain):
-        if chain is None:
-            chain_id = 'all'
-        else:
-            chain_id = chain
-
-        out_filename = out_path / f"{file_stem}_{chain_id}.pdb"
-        extractPDB(protonated_file, str(out_filename), chain)
-        protein = load_structure_np(out_filename, center=False)
-        np.save(out_path / f"{file_stem}_{chain_id}_atomxyz", protein["xyz"])
-        np.save(out_path / f"{file_stem}_{chain_id}_atomtypes", protein["types"])
-
-    if include_complex:
-        make_npy_from_pdb(None)
-
-    if include_indiv_chains:
-        # Get list of chains
-        parser = PDBParser(QUIET=True)
-        struct = parser.get_structure(protonated_file, protonated_file)
-        model = Selection.unfold_entities(struct, "M")[0]
-        all_chains = [chain.get_id() for chain in model]
-
-        if include_complex and len(all_chains) == 1:
-            print('The pdb contains a single chain: not outputting per-chain pdb since the complex has been output.')
-        else:
-            for chain in all_chains:
-                make_npy_from_pdb(chain)
 
 
 # if __name__ == '__main__':
